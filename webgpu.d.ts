@@ -1,3 +1,4 @@
+// https://webkit.org/wp-content/uploads/webgpu-api-proposal.html#api
 declare interface WebGPURenderingContext {
     // -- Identification and feature detection
     readonly name: string
@@ -67,6 +68,9 @@ declare interface WebGPUCommandEncoder {
 declare interface WebGPUViewportDictionary {
 
 }
+declare enum WebGPUTriangleFill{
+
+}
 declare interface WebGPURenderCommandEncoder extends WebGPUCommandEncoder {
 
     // -- State
@@ -84,7 +88,7 @@ declare interface WebGPURenderCommandEncoder extends WebGPUCommandEncoder {
     setStencilReferenceValue(value: number): void
     // @@ Check if we can overload here
     setStencilReferenceValue(front: number, back: number): void
-    // setTriangleFillMode(mode: WebGPUTriangleFill): void
+    setTriangleFillMode(mode: WebGPUTriangleFill): void
     setViewport(viewport: WebGPUViewportDictionary): void
     setVisibilityResultMode(mode: WebGPUVisibilityResultMode, offset: number): void
 
