@@ -1,21 +1,37 @@
 ///<reference path="./webgpu.d.ts" />
+class float4 {
+    x: number
+    y: number
+    z: number
+    w: number
+}
+class Vertex {
+    position: float4
+    color: float4
+}
+
 class Drawing2D {
+
+
+
     canvas: HTMLCanvasElement
     rect: ClientRect
     gpu: WebGPURenderingContext
     commandQueue: WebGPUCommandQueue
     renderPipelineState: WebGPURenderPipelineState
+    vertexBuffer: WebGPUBuffer
     constructor(name: string) {
         this.canvas = <HTMLCanvasElement>document.getElementById(name)
         this.rect = this.canvas.getBoundingClientRect()
-        this.gpu = this.canvas.getContext("webgpu")
-        
-
+        this.makeDevice()
         this.makePipeline()
-       
+        this.makeBuffer()
     }
-    
-    makePipeline(){
+    makeDevice() {
+        this.gpu = this.canvas.getContext("webgpu")
+    }
+
+    makePipeline() {
         let library = this.gpu.createLibrary(document.getElementById("library").innerText)
         let vertexFunction = library.functionWithName("vertex_main")
         let fragmentFunction = library.functionWithName("fragment_main")
@@ -29,7 +45,16 @@ class Drawing2D {
         this.renderPipelineState = this.gpu.createRenderPipelineState(pipelineDescriptor);
         this.commandQueue = this.gpu.createCommandQueue()
     }
-    redraw(){
+    makeBuffer() {
+        const vertexData = new Float32Array(
+            [ 0.0,  0.5, 0, 1, 1, 0, 0, 1,
+             -0.5, -0.5, 0, 1, 0, 1, 0, 1,
+              0.5, -0.5, 0, 1, 0, 0, 1, 1
+            ]
+        )
+        this.vertexBuffer = this.gpu.createBuffer(vertexData)
+    }
+    redraw() {
         let drawable = this.gpu.nextDrawable();
         let renderPassDescriptor = new WebGPURenderPassDescriptor();
         // NOTE: Our API proposal has some of these values as declare enums, not constant numbers.
@@ -38,13 +63,13 @@ class Drawing2D {
         renderPassDescriptor.colorAttachments[0].loadAction = WebGPULoadAction.clear;
         renderPassDescriptor.colorAttachments[0].storeAction = WebGPUStoreAction.store;
         renderPassDescriptor.colorAttachments[0].clearColor = [0.35, 0.65, 0.85, 1.0];
-    
+
 
         let commandBuffer = this.commandQueue.createCommandBuffer();
 
-        let commandEncoder = commandBuffer.createRenderCommandEncoderWithDescriptor(this.renderPassDescriptor)
+        let commandEncoder = commandBuffer.createRenderCommandEncoderWithDescriptor(renderPassDescriptor)
         commandEncoder.setRenderPipelineState(this.renderPipelineState);
-
+        commandEncoder.setVertexBuffer(this.vertexBuffer,0,0)
         // NOTE: We didn't attach any buffers. We create the geometry in the vertex shader using
         // the vertex ID.
 
@@ -55,14 +80,14 @@ class Drawing2D {
         commandBuffer.presentDrawable(drawable);
         commandBuffer.commit();
     }
-    
+
 }
 
 
 window.onload = () => {
     var a = new Drawing2D("canvas")
     // a.redraw()
-    requestAnimationFrame(()=>{
+    requestAnimationFrame(() => {
         a.redraw()
     })
 }
