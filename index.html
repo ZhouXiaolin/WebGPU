@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Canvas Test</title>
+    <script type="text/javascript" src="hello.js"></script>
+    <script id="library" type="x-shader/x-metal">
+        #include <metal_stdlib>
+        
+        using namespace metal;
+        
+        struct Vertex
+        {
+            float4 position [[position]];
+        };
+        
+        vertex Vertex vertex_main(uint vid [[vertex_id]])
+        {
+            Vertex v;
+            switch (vid) {
+            case 0:
+                v.position = float4(-.75, -.75, 0, 1);
+                break;
+            case 1:
+                v.position = float4(.75, -.75, 0, 1);
+                break;
+            case 2:
+                v.position = float4(0, .75, 0, 1);
+                break;
+            default:
+                v.position = float4(0, 0, 0, 1);
+            }
+            return v;
+        }
+        
+        fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
+        {
+            return float4(1.0, 0.0, 0.0, 1.0);
+        }
+        </script>
+</head>
+
+<body>
+    <canvas id="canvas" width="256" height="256"></canvas>
+</body>
+
+</html>
