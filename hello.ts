@@ -1,15 +1,4 @@
 ///<reference path="./webgpu.d.ts" />
-class float4 {
-    x: number
-    y: number
-    z: number
-    w: number
-}
-class Vertex {
-    position: float4
-    color: float4
-}
-
 class Drawing2D {
 
 
